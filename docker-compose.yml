@@ -1,0 +1,36 @@
+version: "3.3"
+
+services:
+  app:
+    container_name: hextrust-app
+    image: hextrust-app:latest
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: 1
+    volumes:
+      - ./app:/app
+#      - ./data-local/web:/vol/web
+#    depends_on:
+#      - db
+    ports:
+      - "8888:8888"
+#  db:
+#    image: mysql:8.0.21
+#    restart: always
+#    container_name: hextrust-db
+#    cap_add:
+#      - SYS_NICE  # CAP_SYS_NICE
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      MYSQL_USER: ${DB_USER}
+#      MYSQL_PASSWORD: ${DB_PASS}
+#      MYSQL_DATABASE: ${DB_NAME}
+#      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+#      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+#    volumes:
+#      - ./data-local/db:/var/lib/mysql
