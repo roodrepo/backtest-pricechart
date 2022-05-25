@@ -29,7 +29,7 @@ class YahooFinance(_Datafeed):
 		'3M'  : '3mo',
 	}
 	
-	_nb_tickers = 300
+	_nb_tickers = 600
 	
 	def __init__(self, nb_tickers: t.Optional[int] = None) -> None:
 		if nb_tickers is not None:
@@ -44,25 +44,57 @@ class YahooFinance(_Datafeed):
 	
 	def _toPriceframe(self, df: DataFrame) -> Priceframe:
 		
-		df.rename(columns={"Datetime": "time", "Open": "open", "High": "high", "Low": "low", "Close": "close", "Volume": "volume"})
+		df.index.name = Priceframe.index_name
 		
 		return Priceframe(df)
 	
 	
-	def priceframe(self, symbol: str, timeframe: Timeframe, date_from: t.Optional[datetime] = None, date_to: t.Optional[datetime] = None) -> Priceframe:
+	def priceframe(self, symbol: t.Union[str, set], timeframe: Timeframe, period: t.Optional[str] = None, date_from: t.Optional[datetime] = None, date_to: t.Optional[datetime] = None) -> Priceframe:
+		'''
 		
-		if symbol not in self._accepted_symbols:
-			raise Exception(f'The ticker {symbol} is not accepted')
+		:param symbol: Can accept multiple symbols at once
+		:param timeframe: Timeframe used to get the tickers
+		:param date_from: The default start time is defined by the numbers of tickers and ending date
+		:param date_to: If not set, we return the price feed until current time
+		:return: Formatted priceframe for the defined period
+		'''
+		if isinstance(symbol, str):
+			_tmp = symbol.split(' ')
+			symbol = set(_tmp)
 		
+		for _symbol in symbol:
+			if _symbol not in self._accepted_symbols:
+				raise Exception(f'The ticker {_symbol} is not accepted')
+		
+		symbol = " ".join(symbol)
+		
+		yf_extra_params = {}
+		
+		# If date_to is not set, we return the price feed until current time
+		if date_to is None:
+			date_to = datetime.utcnow()
+		
+		# otherwise, we add the end datetime in the parameters for yahoo finance
+		else:
+			yf_extra_params['end'] = date_to
+		
+		# The default start time is defined by the numbers of tickers and ending date
 		if date_from is None:
-			date_from = datetime.now() - timeframe.getInterval() * self._nb_tickers
+			
+			date_from = date_to - timeframe.getInterval() * self._nb_tickers
+			yf_extra_params['start'] = date_from.strftime('%Y-%m-%d')
+			
+		if 'end' not in yf_extra_params and period is not None:
+			
+			yf_extra_params['period'] = period
+			del yf_extra_params['start']
 			
 		data = yf.download(
 			tickers= symbol,
-			# period = '1mo',
-			start = date_from.strftime('%Y-%m-%d'),
 			interval = str(timeframe),
-			auto_adjust = True
+			auto_adjust = True,
+			prepost = False,
+			**yf_extra_params
 		)
 		
 		return self._toPriceframe(data)

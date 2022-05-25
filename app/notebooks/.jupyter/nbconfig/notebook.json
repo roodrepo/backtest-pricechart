@@ -1,0 +1,9 @@
+{
+  "keys": {
+	"command": {
+	  "bind": {
+		"Cmd-Shift-R":"jupyter-notebook:restart-kernel"
+	  }
+	}
+  }
+}

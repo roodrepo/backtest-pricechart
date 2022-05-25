@@ -22,3 +22,4 @@ nohup.out
 /scripts
 /ignore
 *.logs
+app/ignore
