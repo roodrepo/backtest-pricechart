@@ -19,4 +19,3 @@ class Priceframe:
 	
 	def get(self) -> DataFrame:
 		return self._priceframe
-	
