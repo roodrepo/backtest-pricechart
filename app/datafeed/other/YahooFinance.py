@@ -76,19 +76,20 @@ class YahooFinance(_Datafeed):
 		
 		# otherwise, we add the end datetime in the parameters for yahoo finance
 		else:
-			yf_extra_params['end'] = date_to
+			yf_extra_params['end'] = date_to.strftime('%Y-%m-%d')
 		
 		# The default start time is defined by the numbers of tickers and ending date
 		if date_from is None:
-			
 			date_from = date_to - timeframe.getInterval() * self._nb_tickers
-			yf_extra_params['start'] = date_from.strftime('%Y-%m-%d')
 			
+		yf_extra_params['start'] = date_from.strftime('%Y-%m-%d')
+		
 		if 'end' not in yf_extra_params and period is not None:
 			
 			yf_extra_params['period'] = period
 			del yf_extra_params['start']
-			
+		
+		
 		data = yf.download(
 			tickers= symbol,
 			interval = str(timeframe),

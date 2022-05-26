@@ -4,10 +4,7 @@ from datetime import datetime
 
 from core.Priceframe import Priceframe
 from core.Timeframe import Timeframe
-
-ERROR_MESSAGES: dict = {
-	'missing_method': 'The method "%s" is not implemented in class %s'
-}
+from core.ErrorMessages import ERROR_MESSAGES
 
 class _Datafeed:
 	
