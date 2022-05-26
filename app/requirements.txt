@@ -160,7 +160,6 @@ tzdata==2022.1
 tzlocal==4.2
 untokenize==0.1.1
 urllib3==1.26.9
-vectorbt==0.23.3
 virtualenv==20.14.1
 wcwidth==0.2.5
 webencodings==0.5.1

@@ -37,7 +37,7 @@ class BollingerBand(_Strategy):
 	
 	'''
 	
-	enable_live     : bool  = False
+	enable_live     : bool  = True
 	allow_long      : bool  = True
 	allow_short     : bool  = True
 
@@ -47,8 +47,8 @@ class BollingerBand(_Strategy):
 	bbands_offset   : int   = 0
 	order_aggreg    : int   = 10
 
-	atr_length      : int   = 14
-	sl_atr_factor   : int   = 2
+	atr_length      : int   = 7
+	sl_atr_factor   : int   = 3
 
 	_acceptable_markets = {'spot', 'margin', 'futures'}
 	
@@ -72,6 +72,7 @@ class BollingerBand(_Strategy):
 			close   = pd.Series(self.data.Close),
 			length  = self.atr_length,
 			overlay = False,
+			plot    = False,
 		)
 		
 	def initLive(self, **kwargs) -> None:
