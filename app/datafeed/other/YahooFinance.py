@@ -91,11 +91,12 @@ class YahooFinance(_Datafeed):
 		
 		
 		data = yf.download(
-			tickers= symbol,
-			interval = str(timeframe),
-			auto_adjust = True,
-			prepost = False,
+			tickers           = symbol,
+			interval          = str(timeframe),
+			auto_adjust       = True,
+			prepost           = False,
 			**yf_extra_params
 		)
+		
 		
 		return self._toPriceframe(data)

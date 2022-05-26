@@ -6,16 +6,13 @@ class Binance(_Exchanges):
 	
 	trx_fee_perc: float = 0.001
 	
-	def executeSignals(self, signals: t.List[Signal]) -> None:
+	def spotAction(self, signal: Signal) -> None:
 		pass
 	
-	def spotAction(self, side:str, position_side: str, order_type: str, symbol: str, order_params: dict = {}) -> None:
+	def marginAction(self, signal: Signal) -> None:
 		pass
 	
-	def marginAction(self, side:str, position_side: str, order_type: str, symbol: str, leverage: int, order_params: dict = {}) -> None:
-		pass
-	
-	def futuresAction(self, side:str, position_side: str, order_type: str, symbol: str, leverage: int, order_params: dict = {}) -> None:
+	def futuresAction(self, signal: Signal) -> None:
 		pass
 	
 	

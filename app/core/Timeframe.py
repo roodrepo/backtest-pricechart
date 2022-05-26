@@ -2,6 +2,8 @@ import typing as t
 from datetime import timedelta
 
 class Timeframe:
+	'''Limit and format acceptable timeframes'''
+	
 	_accepted_timeframes: set = {
 		'1m',
 		'5m',
@@ -41,6 +43,9 @@ class Timeframe:
 		return self.current_timeframe
 	
 	def getInterval(self, timeframe: t.Optional[str] = None) -> timedelta:
+		'''Get interval of timeframe'''
+		
+		
 		tf = timeframe
 		if tf is None:
 			tf = self.current_timeframe

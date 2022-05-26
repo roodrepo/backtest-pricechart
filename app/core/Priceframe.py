@@ -2,6 +2,7 @@ import typing as t
 from pandas import DataFrame
 
 class Priceframe:
+	'''Format price data'''
 	
 	index_name = 'Time'
 	_required_columns: set = {'Open', 'High', 'Low', 'Close', 'Volume'}
