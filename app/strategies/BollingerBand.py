@@ -78,6 +78,7 @@ class BollingerBand(_Strategy):
 	def initLive(self, **kwargs) -> None:
 		'''Init strategy in live trading mode'''
 		
+		# self.data.Close = self.data.Close.to_numpy()
 		self.init()
 		
 		
@@ -103,17 +104,24 @@ class BollingerBand(_Strategy):
 	def next(self):
 		'''Function required by backtesting.py for the backtest.'''
 		
+		close_price = self.data.Close
+		
+		if self.is_live is True:
+			close_price = self.data.Close.to_numpy()
+		
+		
 		bbl = self.bbands[0] # Bollinger band low
 		bbm = self.bbands[1] # Bollinger band medium
 		bbu = self.bbands[2] # Bollinger band up
 		
 		price = self.data.Close[-1]
+
 		
 		if self.allow_long is True:
 			if (crossover(self.data.Close, bbm) or price < bbl[-1]):
 				
 				# Getting extrema take resources, we only calculate it when basic conditions are met
-				maxs = self.data.Close[argrelextrema(self.data.Close, np.greater_equal, order=self.order_aggreg)[0]]
+				maxs = self.data.Close[argrelextrema(close_price, np.greater_equal, order=self.order_aggreg)[0]]
 				
 				if len(maxs) >= 2:
 					higher_highs    = True if maxs[-1] > maxs[-2] else False
@@ -132,7 +140,7 @@ class BollingerBand(_Strategy):
 						)
 			
 			# Checking close condition only of at least one long position opened
-			elif self.position.is_long is True:
+			elif self.is_live or self.position.is_long is True:
 				
 				# Closing portion different according to the condition
 				portion = None
@@ -145,7 +153,7 @@ class BollingerBand(_Strategy):
 				
 				if portion is not None:
 					self.triggerAction(
-						self.position.close,
+						self.position.close if self._broker is not None else None,
 						args_action={
 							'portion': portion,
 						},
@@ -159,7 +167,7 @@ class BollingerBand(_Strategy):
 			if price > bbu[-1]:
 				
 				# Getting extrema take resources, we only calculate it when basic conditions are met
-				mins = self.data.Close[argrelextrema(self.data.Close, np.less_equal, order=self.order_aggreg)[0]]
+				mins = self.data.Close[argrelextrema(close_price, np.less_equal, order=self.order_aggreg)[0]]
 	
 				if len(mins) >= 2:
 					lower_lows      = True if  mins[-2] > mins[-1] else False
@@ -178,7 +186,7 @@ class BollingerBand(_Strategy):
 						)
 			
 			# Checking close condition only of at least one short position opened
-			elif self.position.is_short is True:
+			elif self.is_live or self.position.is_short is True:
 				
 				# Closing portion different according to the condition
 				portion = None
@@ -191,7 +199,7 @@ class BollingerBand(_Strategy):
 				
 				if portion is not None:
 					self.triggerAction(
-						self.position.close,
+						self.position.close if self._broker is not None else None,
 						args_action={
 							'portion': portion,
 						},

@@ -1,4 +1,5 @@
 from backtesting import Backtest, Strategy
+from backtesting.backtesting import _Broker
 from core.Priceframe import Priceframe
 from core.Signal import Signal
 import inspect
@@ -39,11 +40,21 @@ class _Strategy(Strategy):
 		if cls.enable_live is False:
 			raise Exception(f'Live trading is not enabled for {cls.__name__}')
 		
+		# data = {
+		# 	'Close': priceframe.get()['Close'].values,
+		# 	'High': priceframe.get()['High'].values,
+		# 	'Low': priceframe.get()['Low'].values,
+		# 	'Open': priceframe.get()['Open'].values,
+		# 	'Volume': priceframe.get()['Volume'].values,
+		# }
+		
+		# bt = cls.backtest(priceframe, cash = cash, commission= commission)
 		strat_instance = cls(data= priceframe.get(), broker= None, params={})
 		strat_instance.is_live = True
 		strat_instance.market = market
 		strat_instance.live_params = {'cash': cash, 'commission': commission, **kwargs}
 		strat_instance.initLive(**kwargs)
+		strat_instance.next()
 		
 		return [] if strat_instance.signals is None else strat_instance.signals
 	
@@ -57,12 +68,14 @@ class _Strategy(Strategy):
 		'''Trigger signal on backtest or append to the signals' list for later execution'''
 		
 		if self.is_live is True:
-			self.addSignal(Signal(market= self.market_type, **args_action, **args_signal))
+			self.addSignal(Signal(market= self.market, **args_action, **args_signal))
 		else:
 			func(**args_action)
 	
 	def addSignal(self, signal: Signal):
 		'''Adding signal to list'''
+		
+		print(signal)
 		
 		# Preventing the signals list from mutability across multiple instances of same object
 		if self.signals is None:
